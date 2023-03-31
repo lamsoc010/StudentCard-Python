@@ -3,6 +3,8 @@
 # pip install openpyxl
 import model.Student as student
 import pandas as pd
+import io
+import base64
 
 
 def readExcel(url):
@@ -32,15 +34,21 @@ def readExcel(url):
     except Exception as e:
         return "Lỗi rồi: " + str(e)
 
-def readExcel2(url):
+def readExcel2(firebase64):
     try:
         # đọc file excel
         # skiprows: bỏ qua n dòng đầu tiên
         # usecols: chỉ đọc cột 1 => 8
         # dtype: định dạng kiểu dữ liệu
         require_cols = [1, 2, 3, 4, 5, 6, 7, 8, 9]  # thêm cột trạng thái vào danh sách cột
+
+        # Chuyển firebase64 thành file excel
+        bytesString = base64.b64decode(firebase64)
+        fileObject = io.BytesIO(bytesString)
+
+        # Đọc file excel
         dataframe1 = pd.read_excel(
-            url,  skiprows=1, usecols=require_cols)
+            fileObject,  skiprows=1, usecols=require_cols)
         listStudent = []
         for i in range(len(dataframe1)):
             sv = student.Student(dataframe1.iloc[i, 0], dataframe1.iloc[i, 1], dataframe1.iloc[i, 2], dataframe1.iloc[i, 3],
@@ -53,9 +61,12 @@ def readExcel2(url):
 
 import pandas as pd
 
-def writeExcel(url, listStudent):
+def writeExcel(firebase64, listStudent):
+    # Chuyển firebase64 thành file excel
+    bytesString = base64.b64decode(firebase64)
+    fileObject = io.BytesIO(bytesString)
     # Đọc dữ liệu từ file Excel vào DataFrame
-    df = pd.read_excel(url, skiprows= 1)
+    df = pd.read_excel(fileObject, skiprows= 1)
 
     # Duyệt qua danh sách sinh viên
     for student in listStudent:
@@ -63,7 +74,8 @@ def writeExcel(url, listStudent):
         df.iloc[(df.iloc[:, 1] == student.maSV).values, 9] = 1
 
     # Ghi DataFrame vào file Excel
-    df.to_excel(url, index=False, header=True, startrow=1)
+    urlExcel = "assets/input/danhsachsinhvien.xlsx"
+    df.to_excel(urlExcel, index=False, header=True, startrow=1)
 
 def readExcel1(url):
     return url

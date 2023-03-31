@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <form id="my-form">
+        <label for="backgroundPath">Đường dẫn đến ảnh nền:</label>
+        <input type="text" id="backgroundPath" name="backgroundPath"><br>
+
+        <label for="filePath">Đường dẫn đến file Excel:</label>
+        <input type="text" id="filePath" name="filePath"><br>
+
+        <label for="outputPath">Đường dẫn đến thư mục xuất ra:</label>
+        <input type="text" id="outputPath" name="outputPath"><br>
+
+        <button type="submit">Gửi yêu cầu</button>
+    </form>
+    <script>
+        const form = document.querySelector('#my-form');
+        const apiUrl = 'http://localhost:6868/chooseForm';
+
+        form.addEventListener('submit', event => {
+            event.preventDefault(); // Ngăn chặn sự kiện reload trang
+
+            const backgroundPath = form.querySelector('#backgroundPath').value;
+            const filePath = form.querySelector('#filePath').value;
+            const outputPath = form.querySelector('#outputPath').value;
+
+            const requestOptions = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    backgroundPath,
+                    filePath,
+                    outputPath
+                })
+            };
+
+            fetch(apiUrl, requestOptions)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    return
+                    // Xử lý phản hồi từ máy chủ
+                })
+                .catch(error => console.log(error));
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <input type="file" id="file" />
+    <ul id="listing"></ul>
+
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script>
+        let file = document.getElementById("file");
+        file.addEventListener("change", (e) => {
+            const file = e.target.files[0];
+            console.log(file);
+
+            const path = (window.URL || window.webkitURL).createObjectURL(file);
+            console.log("path", path);
+
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => {
+                console.log(reader.result);
+            };
+        });
+
+        const nameInput = document.getElementById('nameInput');
+        const submitButton = document.getElementById('submitButton');
+
+        submitButton.addEventListener('click', () => {
+            const name = nameInput.value;
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/api');
+            xhr.setRequestHeader('Content-Type', 'application/json');
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        const response = JSON.parse(xhr.responseText);
+                        alert(response.message);
+                    } else {
+                        alert('Có lỗi xảy ra');
+                    }
+                }
+            };
+
+            xhr.send(JSON.stringify({ name: name }));
+        });
+    </script>
+</body>
+
+</html>

@@ -1,52 +1,67 @@
 from flask import Flask, request, jsonify, make_response
 import lib.readFileExcel as readFileExcel
 import lib.createStudentCard as createStudentCard
+import service.StudentCardService as studentCardService
 import json
+from flask_cors import CORS
+import base64
+from io import BytesIO
+from PIL import Image
 
 url = 'D:\\Study\\DHPhuXuan\\Nam3\\HK-Spring\\Python\\TheSinhVien\\assets\\input\\danhsachsinhvien.xlsx'
 
 
 app = Flask(__name__)
+CORS(app)
 
 # API endpoint to get list of all students
-@app.route('/', methods=['GET'])
+@app.route('/hello', methods=['GET'])
 def hello():
-    return jsonify("Hello World")
+    response = make_response(jsonify({"Success": "Thành công"}), 200)
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
 
 @app.route('/chooseForm', methods=['POST'])
 def create_student_card():
     # Get param
-    backgroundPath = request.json.get('backgroundPath')
-    filePath = request.json.get('filePath')
+    backgroundBase64 = request.json.get('backgroundBase64')
+    fileBase64 = request.json.get('fileBase64')
     outputPath = request.json.get('outputPath')
 
     # Validate param
-    if not backgroundPath:
+    if not backgroundBase64:
         return make_response(jsonify({"error": "Thiếu thông tin tham số backgroundPath"}), 400) # trả về mã lỗi 400 Bad Request
-    if not filePath:
-        return make_response(jsonify({"error": "Thiếu thông tin tham số filePath"}), 400) # trả về mã lỗi 400 Bad Request
+    if not fileBase64:
+        return make_response(jsonify({"error": "Thiếu thông tin tham số fileBase64"}), 400) # trả về mã lỗi 400 Bad Request
     if not outputPath:
         return make_response(jsonify({"error": "Thiếu thông tin tham số outputPath"}), 400) # trả về mã lỗi 400 Bad Request
 
     try:
         # xử lý logic và trả về kết quả
-        listStudent = readFileExcel.readExcel2(filePath)
-        totalRecordError = 0
-        totalRecordSuccess = 0
-        for i, student in enumerate(listStudent, start=0):
-            if student is None: 
-                totalRecordError += 1
-            if(student.trangThai == 0):
-                createStudentCard.renderStudentCard(student, i, outputPath, backgroundPath)
-                totalRecordSuccess += 1
-        readFileExcel.writeExcel(filePath, listStudent)
-        # return make_response(jsonify({"success": f"Đã tạo {totalRecordSuccess} thẻ trên {len(listStudent)} tổng số sinh viên"}), 200) # Thành công
-        return make_response(jsonify({"success": {"totalRecord": len(listStudent), "totalRecordSuccess": totalRecordSuccess, "totalRecordError": totalRecordError}}), 200)
+        listStudent, totalRecordSuccess, totalRecordError = studentCardService.handleCreateStudentCard(fileBase64, outputPath, backgroundBase64)
+
+        return make_response(jsonify({"success": {"totalRecord": len(listStudent), "totalRecordSuccess": totalRecordSuccess, "totalRecordError": totalRecordError}}), 200, {'Access-Control-Allow-Origin': '*'})
     except FileNotFoundError:
         return make_response(jsonify({"error": "File không tồn tại"}), 404) # trả về mã lỗi 404 Not Found
     except Exception as e:
         return make_response(jsonify({"error": "Lỗi: " + str(e)}), 500) # trả về mã lỗi 500 Internal Server Error
     
+@app.route('/selectForm', methods=['GET'])
+def selectForm():
+    # Get param
+    idForm = request.args.get('idForm')
+
+    # Validate param
+    if not idForm:
+        return make_response(jsonify({"error": "Thiếu thông tin tham số idForm"}), 400) # trả về mã lỗi 400 Bad Request
+    try:
+       # xử lý logic và trả về kết quả
+        img_str = studentCardService.handleSelectForm(idForm)
+        
+        # Trả về chuỗi base64
+        return make_response(jsonify({"image": img_str}), 200)
+    except Exception as e:
+        return make_response(jsonify({"error": "Lỗi: " + str(e)}), 500) # trả về mã lỗi 500 Internal Server Error
 
 if __name__ == '__main__':
     app.run(host="127.0.0.1", port="6868")
