@@ -27,6 +27,7 @@ def create_student_card():
     backgroundBase64 = request.json.get('backgroundBase64')
     fileBase64 = request.json.get('fileBase64')
     outputPath = request.json.get('outputPath')
+    idForm = request.json.get('idForm')
 
     # Validate param
     if not backgroundBase64:
@@ -38,7 +39,7 @@ def create_student_card():
 
     try:
         # xử lý logic và trả về kết quả
-        listStudent, totalRecordSuccess, totalRecordError = studentCardService.handleCreateStudentCard(fileBase64, outputPath, backgroundBase64)
+        listStudent, totalRecordSuccess, totalRecordError = studentCardService.handleCreateStudentCard(fileBase64, outputPath, backgroundBase64, idForm)
 
         return make_response(jsonify({"success": {"totalRecord": len(listStudent), "totalRecordSuccess": totalRecordSuccess, "totalRecordError": totalRecordError}}), 200, {'Access-Control-Allow-Origin': '*'})
     except FileNotFoundError:

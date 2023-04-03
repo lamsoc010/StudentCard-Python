@@ -6,7 +6,7 @@ from io import BytesIO
 from PIL import Image
 import base64
 
-def handleCreateStudentCard(fileBase64, outputPath, backgroundBase64):
+def handleCreateStudentCard(fileBase64, outputPath, backgroundBase64, idForm):
     listStudent = readFileExcel.readExcel2(fileBase64)
     totalRecordError = 0
     totalRecordSuccess = 0
@@ -14,7 +14,12 @@ def handleCreateStudentCard(fileBase64, outputPath, backgroundBase64):
         if student is None: 
             totalRecordError += 1
         if(student.trangThai == 0):
-            createStudentCard.renderStudentCard(student, i, outputPath, backgroundBase64)
+            if(idForm == 1):
+                createStudentCard.renderStudentCard(student, i, outputPath, backgroundBase64)
+            elif(idForm == 2): 
+                createStudentCard.renderStudentCard2(student, i, outputPath, backgroundBase64)
+            elif(idForm == 3): 
+                createStudentCard.renderStudentCard3(student, i, outputPath, backgroundBase64)
             totalRecordSuccess += 1
     readFileExcel.writeExcel(fileBase64, listStudent)
     return listStudent, totalRecordSuccess, totalRecordError

@@ -18,8 +18,6 @@ hight = int(hightCard * DPI)
 
 # Đường dẫn tới file ảnh
 # backgroundImagePath = "TheSinhVien/assets/image/background.jpg"
-logoImagePath = "D:\\Study\\DHPhuXuan\\Nam3\\HK-Spring\\DoAn-Python\\assets\\image\\logo.png"
-
 
 
 def renderStudentCard(student, i, outputPath, backgroundBase64):
@@ -52,7 +50,7 @@ def renderStudentCard(student, i, outputPath, backgroundBase64):
     
 
     # Vẽ logo
-    student_image = Image.open(logoImagePath)
+    student_image = Image.open(student.anhThe)
     widthLogo = int(width/6)
     paddingLogo = 50
     hightLogo = int(hightHeader) - paddingLogo*2
@@ -182,7 +180,7 @@ def renderStudentCard2(student, i, outputPath, backgroundBase64):
     
 
     # Vẽ logo
-    student_image = Image.open(logoImagePath)
+    student_image = Image.open(student.anhThe)
     widthLogo = int(width/6)
     paddingLogo = 50
     hightLogo = int(hightHeader) - paddingLogo*2
@@ -313,7 +311,7 @@ def renderStudentCard3(student, i, outputPath, backgroundBase64):
     
 
     # Vẽ logo
-    student_image = Image.open(logoImagePath)
+    student_image = Image.open(student.anhThe)
     widthLogo = int(width/6)
     paddingLogo = 50
     hightLogo = int(hightHeader) - paddingLogo*2
