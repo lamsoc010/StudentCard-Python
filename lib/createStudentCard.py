@@ -1,6 +1,5 @@
 from io import BytesIO
 from PIL import Image, ImageDraw, ImageFont
-from PyPDF2 import PdfFileReader, PdfFileWriter
 import qrcode
 from unidecode import unidecode
 import os

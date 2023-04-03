@@ -1,7 +1,5 @@
-from flask import Flask, request, jsonify, make_response
 import lib.readFileExcel as readFileExcel
 import lib.createStudentCard as createStudentCard
-from flask_cors import CORS
 from io import BytesIO
 from PIL import Image
 import base64

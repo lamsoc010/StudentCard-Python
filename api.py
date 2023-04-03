@@ -1,12 +1,6 @@
 from flask import Flask, request, jsonify, make_response
-import lib.readFileExcel as readFileExcel
-import lib.createStudentCard as createStudentCard
 import service.StudentCardService as studentCardService
-import json
 from flask_cors import CORS
-import base64
-from io import BytesIO
-from PIL import Image
 
 url = 'D:\\Study\\DHPhuXuan\\Nam3\\HK-Spring\\Python\\TheSinhVien\\assets\\input\\danhsachsinhvien.xlsx'
 
